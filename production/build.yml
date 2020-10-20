@@ -1,0 +1,39 @@
+---
+- name: Build java application in docker container
+  hosts: web
+  become: yes
+
+  tasks:
+  - name: Ensure dockerfile is present
+    copy: 
+      src: dockerfile
+      dest: /home
+
+  - name: Build Docker image from Dockerfile
+    docker_image:
+      name: dockerfile
+      path: /home
+      state: present
+
+  - name: Running the container
+    docker_container:
+      name: cont
+      image: dockerfile
+      state: present
+      volumes:
+        - Docker:/home/Docker/hello-world-war/target
+
+- name: Transfer war file from web to db and deploy with tomcat
+  hosts: db
+  become: yes
+ 
+  tasks:
+
+  - name: Ensure tomcat package is present
+    apt:
+      name: tomcat9
+      state: present
+    
+  - name: Copy Remote-To-Remote (from web to db)
+    synchronize: src=/var/lib/docker/volumes/Docker/_data/hello-world-war-1.0.0.war  dest=/var/lib/tomcat9/webapps/
+    delegate_to: web
