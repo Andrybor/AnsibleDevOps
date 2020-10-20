@@ -12,8 +12,11 @@
  
   - name: Ensure index.html is present
     copy:
-      src: index.html
-      dest: /var/www/html 
+      src: ./{{ item }}
+      dest: /var/www/html
+    with_items:
+      - index.html
+      - crossfit.css 
  
   - name: Ensure nginx service is started
     service:
