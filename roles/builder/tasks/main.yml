@@ -1,0 +1,23 @@
+---
+# tasks file for builder
+
+- name: Ensure dockerfile is present
+  copy:
+    src: ../../../production/dockerfile
+    dest: /home
+
+#- name:	install packages
+#  apt: name=docker.io state=present
+
+- name: Build Docker image from Dockerfile
+  docker_image:
+    name: dockerfile
+    path: /home
+    state: present
+- name: Running the container
+  docker_container:
+    name: cont
+    image: dockerfile
+    state: present
+    volumes:
+      - Docker:/home/Docker/hello-world-war/target

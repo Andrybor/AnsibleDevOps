@@ -1,0 +1,16 @@
+---
+# tasks file for deployer
+- name: Ensure tomcat package is present
+  apt:
+    name: tomcat9
+    state: present
+
+- name: Allow port 8080
+  ufw:
+    rule: allow
+    port: 8080
+    
+- name: Copy Remote-To-Remote (from web to db)
+  synchronize: src=/var/lib/docker/volumes/Docker/_data/hello-world-war-1.0.0.war  dest=/var/lib/tomcat9/webapps/
+  delegate_to: "{{ item }}"
+  with_inventory_hostnames: slaveA

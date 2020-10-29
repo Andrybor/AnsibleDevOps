@@ -1,0 +1,12 @@
+
+---
+- name: build java application
+  hosts: slaveA
+  become: yes
+  roles:
+    - builder
+- name: deploy java application
+  hosts: slaveB
+  become: yes
+  roles:
+    - deployer
